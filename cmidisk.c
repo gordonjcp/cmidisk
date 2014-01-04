@@ -47,7 +47,7 @@ int qdos_readdir(unsigned char *buffer) {
 	ent_ct = 0;		// no entries yet
 	
 	for (i=0; i<160; i++) {
-		if (buffer[ptr] != 0 ) {	// directory entry isn't empty
+		if ((buffer[ptr] != 0) && (buffer[ptr] != 0xff) ) {	// directory entry isn't empty
 			memcpy(directory[ent_ct].name, buffer+ptr, 8);
 			memcpy(directory[ent_ct].type, buffer+ptr+8, 2);
 			directory[ent_ct].block = (buffer[ptr+10]<<8) + buffer[ptr+11];
@@ -68,6 +68,7 @@ int main (int argc, char **argv) {
 	char wr_fn[12]; // eightchr.wav
 
 	int i,j;
+	char c;
 	
 	if (argc != 2) {
 		printf("needs a disk image file\n");
@@ -87,11 +88,11 @@ int main (int argc, char **argv) {
 		if (strncmp(directory[i].type, "VC", 2) == 0) {
 			// lowercase, stop at space or 8 chars
 			for (j=0; j < 8; j++) {
-				if (directory[i].name[j] == ' ') break;
-				wr_fn[j] = tolower(directory[i].name[j]);
+				c = directory[i].name[j];
+				if (c == ' ') break;
+				wr_fn[j] = tolower(c);
 			}
 			sprintf(wr_fn+j, ".wav");
-			printf("%s\n", wr_fn);
 			snd_write(wr_fn, buffer + 0x1580 + 128*directory[i].block);
 		}
 	}
