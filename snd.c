@@ -17,3 +17,34 @@
 	You should have received a copy of the GNU General Public License
 	along with cmidisk.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include <sndfile.h>
+#include "snd.h"
+
+int snd_write(char *filename, char *buffer) {
+	// write a 16384-frame long mono .wav file
+
+	SNDFILE *snd;
+	SF_INFO info;
+	int i;
+
+	short sf_buffer[16384];
+
+	info.samplerate = 16000;
+	info.channels = 1;
+	info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_U8;
+	
+	snd = sf_open(filename, SFM_WRITE, &info);
+	if (!snd) {
+		printf("Couldn't open %s", filename);
+		sf_perror(NULL);
+		exit(1);
+	}
+	
+	for (i=0; i < 16384; i++) {
+		sf_buffer[i] = (buffer[i]-128)<<8;
+	}
+
+	sf_write_short(snd, sf_buffer, 16384);
+	sf_close(snd);
+}

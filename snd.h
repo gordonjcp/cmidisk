@@ -17,3 +17,10 @@
 	You should have received a copy of the GNU General Public License
 	along with cmidisk.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#ifndef __SND_H
+#define __SND_H
+
+int snd_write(char *filename, char *buffer);
+
+#endif __SND_H

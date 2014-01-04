@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "imd.h"
+#include "snd.h"
 
 // unpacked disk is 77 tracks * 26 sectors * 2 sides * 128 bytes
 #define IMGSIZE 512512
@@ -62,7 +63,11 @@ int main (int argc, char **argv) {
 	FILE *out;
 	unsigned char buffer[IMGSIZE];
 	unsigned char *d;
-	int fs;	
+	int fs;
+	
+	char wr_fn[12]; // eightchr.wav
+
+	int i,j;
 	
 	if (argc != 2) {
 		printf("needs a disk image file\n");
@@ -75,12 +80,19 @@ int main (int argc, char **argv) {
 	free(d);
 
 	qdos_readdir(buffer);
-	int i;
+
 	for (i=0; i<160; i++) {
 		if (directory[i].attr == 0) continue;
 		printf("%3d: %s.%s - block %04x\n", i, directory[i].name, directory[i].type, directory[i].block);
 		if (strncmp(directory[i].type, "VC", 2) == 0) {
-			printf("-exporting vc file\n");
+			// lowercase, stop at space or 8 chars
+			for (j=0; j < 8; j++) {
+				if (directory[i].name[j] == ' ') break;
+				wr_fn[j] = tolower(directory[i].name[j]);
+			}
+			sprintf(wr_fn+j, ".wav");
+			printf("%s\n", wr_fn);
+			snd_write(wr_fn, buffer + 0x1580 + 128*directory[i].block);
 		}
 	}
 

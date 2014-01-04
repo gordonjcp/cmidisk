@@ -15,7 +15,7 @@ def configure(conf):
     conf.load('compiler_cc')
     conf.check(header_name='stdlib.h')
     conf.check(header_name='stdio.h')
-    #conf.check(lib="sndfile")
+    conf.check(lib="sndfile")
     
     # set for debugging
     conf.env.CFLAGS = ['-O0', '-g3', '-ggdb']
@@ -25,8 +25,8 @@ def build(bld):
     # the main program
     bld(
         features = 'c cprogram',
-        source = ['cmidisk.c', 'imd.c'],
+        source = ['cmidisk.c', 'imd.c', 'snd.c'],
         target = APPNAME,
-        #use = ['SNDFILE'] ,
+        use = ['SNDFILE'] ,
         includes = '. /usr/include')
 
