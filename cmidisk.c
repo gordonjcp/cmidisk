@@ -39,21 +39,10 @@ int main (int argc, char **argv) {
 
 	fs = imd_read(argv[1], &d);
 	printf("%d bytes read\n", fs);
-		
 	imd_unpack(d, buffer);
 	free(d);
 
-	printf("output buffer\n");
-	int i;
-	for(i=0; i<16; i++) {
-		printf("%02x ", *(buffer+i));
-	}
-	printf("\n");
-	
 	out = fopen("test.bin", "w");
 	printf("writing %d bytes\n", fwrite(buffer, 1, 512512, out));
 	fclose(out);
-	
-
-
 }
