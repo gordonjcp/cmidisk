@@ -20,11 +20,43 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "imd.h"
 
 // unpacked disk is 77 tracks * 26 sectors * 2 sides * 128 bytes
 #define IMGSIZE 512512
+
+typedef struct {
+	char name[9];
+	char type[3];
+	unsigned int block;
+	unsigned int attr;
+} qdos_dirent;
+
+qdos_dirent directory[160];
+
+int qdos_readdir(unsigned char *buffer) {
+	// read the disk directory
+	// first sector is ID block, second is Cluster Allocation Table, third is lockout table
+
+	int ptr, block, attr, i, ent_ct;
+
+	ptr = 3*128;	// start of directory
+	ent_ct = 0;		// no entries yet
+	
+	for (i=0; i<160; i++) {
+		if (buffer[ptr] != 0 ) {	// directory entry isn't empty
+			memcpy(directory[ent_ct].name, buffer+ptr, 8);
+			memcpy(directory[ent_ct].type, buffer+ptr+8, 2);
+			directory[ent_ct].block = (buffer[ptr+10]<<8) + buffer[ptr+11];
+			directory[ent_ct].attr = (buffer[ptr+12]<<8) + buffer[ptr+13];
+			ent_ct++;
+		}
+		ptr += 16;
+	}
+	
+}
 
 int main (int argc, char **argv) {
 	FILE *out;
@@ -42,7 +74,22 @@ int main (int argc, char **argv) {
 	imd_unpack(d, buffer);
 	free(d);
 
+	qdos_readdir(buffer);
+	int i;
+	for (i=0; i<160; i++) {
+		if (directory[i].attr == 0) continue;
+		printf("%3d: %s.%s - block %04x\n", i, directory[i].name, directory[i].type, directory[i].block);
+		if (strncmp(directory[i].type, "VC", 2) == 0) {
+			printf("-exporting vc file\n");
+		}
+	}
+
+	
+
+// uncomment to write out the disk image
+#if 0
 	out = fopen("test.bin", "w");
-	printf("writing %d bytes\n", fwrite(buffer, 1, 512512, out));
+	printf("writing %d bytes\n", (int) fwrite(buffer, 1, 512512, out));
 	fclose(out);
+#endif
 }
