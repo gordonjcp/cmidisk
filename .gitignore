@@ -2,3 +2,5 @@
 .waf*
 .lock*
 build/
+*.wav
+test.bin
