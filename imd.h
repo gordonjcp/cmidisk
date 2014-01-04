@@ -2,7 +2,7 @@
 
    	(C) 2014 Gordon JC Pearce MM0YEQ <gordon@gjcp.net>
 	
-	cmidisk.c
+	imd.h
 
 	cmidisk is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -18,42 +18,11 @@
 	along with cmidisk.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef __IMD_H
+#define __IMD_H
 
-#include "imd.h"
+enum {UNAVAIL, NORMAL, COMPRESSED, NORMALDEL, COMPDEL, NORMALERR, COMPERR, COMPDELERR };
 
-// unpacked disk is 77 tracks * 26 sectors * 2 sides * 128 bytes
-#define IMGSIZE 512512
+int imd_read(char *filename, unsigned char **diskbuff);
 
-int main (int argc, char **argv) {
-	FILE *out;
-	unsigned char buffer[IMGSIZE];
-	unsigned char *d;
-	int fs;	
-	
-	if (argc != 2) {
-		printf("needs a disk image file\n");
-		exit(1);
-	}
-
-	fs = imd_read(argv[1], &d);
-	printf("%d bytes read\n", fs);
-		
-	imd_unpack(d, buffer);
-	free(d);
-
-	printf("output buffer\n");
-	int i;
-	for(i=0; i<16; i++) {
-		printf("%02x ", *(buffer+i));
-	}
-	printf("\n");
-	
-	out = fopen("test.bin", "w");
-	printf("writing %d bytes\n", fwrite(buffer, 1, 512512, out));
-	fclose(out);
-	
-
-
-}
+#endif

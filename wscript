@@ -25,7 +25,7 @@ def build(bld):
     # the main program
     bld(
         features = 'c cprogram',
-        source = ['cmidisk.c'],
+        source = ['cmidisk.c', 'imd.c'],
         target = APPNAME,
         #use = ['SNDFILE'] ,
         includes = '. /usr/include')
