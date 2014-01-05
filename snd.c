@@ -19,9 +19,10 @@
 */
 
 #include <sndfile.h>
+
 #include "snd.h"
 
-int snd_write(char *filename, char *buffer) {
+int snd_write(char *filename, unsigned char *buffer) {
 	// write a 16384-frame long mono .wav file
 
 	SNDFILE *snd;
@@ -38,7 +39,7 @@ int snd_write(char *filename, char *buffer) {
 	if (!snd) {
 		printf("Couldn't open %s", filename);
 		sf_perror(NULL);
-		exit(1);
+		return -1;
 	}
 	
 	for (i=0; i < 16384; i++) {
@@ -47,4 +48,5 @@ int snd_write(char *filename, char *buffer) {
 
 	sf_write_short(snd, sf_buffer, 16384);
 	sf_close(snd);
+	return 0;
 }

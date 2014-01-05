@@ -103,7 +103,7 @@ static int parse_sector(unsigned char *buffer, int ptr, unsigned char *sector) {
 static int imd_parse_track(unsigned char *buffer, int ptr, unsigned char *track) {
 	// walk along the track data
 
-	int i, j, l, offset = 5;
+	int i, sec_l, offset = 5;
 	unsigned char sector[128];
 	unsigned char sectormap[26];
 	unsigned char cylindermap[26];
@@ -127,10 +127,10 @@ static int imd_parse_track(unsigned char *buffer, int ptr, unsigned char *track)
 		offset +=  26; // 26 byte sector map
 	}
 
-	for (j=0; j<26; j++) {
-		l = parse_sector(buffer, ptr+offset, sector);
-		memcpy(track + 128*(sectormap[j]-1), sector, 128);
-		offset += l;
+	for (i=0; i<26; i++) {
+		sec_l = parse_sector(buffer, ptr+offset, sector);
+		memcpy(track + 128*(sectormap[i]-1), sector, 128);
+		offset += sec_l;
 	}
 
 	return offset;
@@ -152,5 +152,5 @@ int imd_unpack(unsigned char *diskbuff, unsigned char *imgbuff) {
 		ptr += imd_parse_track(diskbuff, ptr, track);
 		memcpy(imgbuff + (3328*i), track, 3328);
 	}
-
+	return ptr;
 }

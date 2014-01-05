@@ -21,6 +21,6 @@
 #ifndef __SND_H
 #define __SND_H
 
-int snd_write(char *filename, char *buffer);
+int snd_write(char *filename, unsigned char *buffer);
 
-#endif __SND_H
+#endif

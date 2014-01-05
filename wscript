@@ -18,7 +18,7 @@ def configure(conf):
     conf.check(lib="sndfile")
     
     # set for debugging
-    conf.env.CFLAGS = ['-O0', '-g3', '-ggdb']
+    conf.env.CFLAGS = ['-O0', '-g3', '-ggdb', '-Wall', '-Werror']
 
     
 def build(bld):
@@ -28,5 +28,10 @@ def build(bld):
         source = ['cmidisk.c', 'imd.c', 'snd.c'],
         target = APPNAME,
         use = ['SNDFILE'] ,
+        includes = '. /usr/include')
+    bld(
+        features = 'c cprogram',
+        source = ['unimd.c', 'imd.c', ],
+        target = "unimd",
         includes = '. /usr/include')
 

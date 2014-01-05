@@ -24,5 +24,6 @@
 enum {UNAVAIL, NORMAL, COMPRESSED, NORMALDEL, COMPDEL, NORMALERR, COMPERR, COMPDELERR };
 
 int imd_read(char *filename, unsigned char **diskbuff);
+int imd_unpack(unsigned char *diskbuff, unsigned char *imgbuff);
 
 #endif

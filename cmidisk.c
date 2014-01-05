@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "imd.h"
 #include "snd.h"
@@ -41,7 +42,7 @@ int qdos_readdir(unsigned char *buffer) {
 	// read the disk directory
 	// first sector is ID block, second is Cluster Allocation Table, third is lockout table
 
-	int ptr, block, attr, i, ent_ct;
+	int ptr, i, ent_ct;
 
 	ptr = 3*128;	// start of directory
 	ent_ct = 0;		// no entries yet
@@ -56,11 +57,11 @@ int qdos_readdir(unsigned char *buffer) {
 		}
 		ptr += 16;
 	}
-	
+	return ptr;
 }
 
 int main (int argc, char **argv) {
-	FILE *out;
+
 	unsigned char buffer[IMGSIZE];
 	unsigned char *d;
 	int fs;
@@ -97,12 +98,5 @@ int main (int argc, char **argv) {
 		}
 	}
 
-	
-
-// uncomment to write out the disk image
-#if 0
-	out = fopen("test.bin", "w");
-	printf("writing %d bytes\n", (int) fwrite(buffer, 1, 512512, out));
-	fclose(out);
-#endif
+	return 0;
 }
